@@ -7,7 +7,7 @@ const userToken = require('../routes/userToken');
 const usdAmountHistory = require('../routes/usdAmountHistory');
 const transcationStatsDisplay = require('../routes/transactionStatsDisplay');
 
-//const error = require('../middleware/error');
+const error = require('../middlewares/error');
 
 
 
@@ -22,5 +22,5 @@ module.exports = function (app){
     app.use('/api/usd-history', usdAmountHistory);
     app.use('/api/statistics', transcationStatsDisplay);
     
-    //app.use(error);
+    app.use(error);
 }

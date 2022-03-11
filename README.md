@@ -1,4 +1,5 @@
 # Dreamland
+
 Dreamland is a meta verse company and has a concept of games, where every user can play these games and win DREAM tokens multiple times a day. A user can win upto 5 DREAM tokens on a single day.
 
 DREAM tokens are a virtual currency and have a real monetary value. At the end of every day, the DREAM tokens won by the user are converted to USD by applying a standard multiplier of 15 cents per token.
@@ -22,3 +23,7 @@ Assumptions:
 6. Attention to details on the data types (good idea to look at BigNumber or other web3 data types that can support arithmetic on these large float numbers)
 7. Edge cases validation
 8. This is a global system with customers across the world. So share briefly about how you think about setting up the infra, how to share data across different regions, how to have region-specific data for issues like GDPR, how to replicate some tables out of a region to a central cluster for analytics, pros/cons, etc.
+
+SET dreamland_jwtPrivateKey with export dreamland_jwtPrivateKey=anythinghere
+
+RUN APP with nodemon || node app.js

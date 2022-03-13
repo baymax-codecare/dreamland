@@ -9,25 +9,37 @@ router.post('/', async(req, res) => {
     const authToken = req.header('x-auth-token');
     if (!authToken) return res.status(401).send('Access denied, you are not logged in...');
     
-    const tokenNames = ['Alpha', 'Beta', 'Delta']
+    const tokenNames = ['Alpha', 'Beta', 'Delta'];
+    let now = new Date();
+    let month = now.getUTCMonth() + 1; //months from 1-12
+    let day = now.getUTCDate();
+    let year = now.getUTCFullYear();
+
+    const newDate = day + "/" + month + "/" + year;
+    const dateIsToday = newDate == dateWon;
     
     const random = Math.floor(Math.random() * 1000);
     const dollarConvert = 15/100;
     const usdValueOfToken = (dollarConvert * random).toFixed(2);
-    console.log('USD-RATE++++', usdValueOfToken);
     const randomTokenName = Math.floor(Math.random() * tokenNames.length);
     
     try{
         const decoded = jwt.verify(authToken, config.get('jwtPrivateKey'));
-        let newTokenRecord = new TokenCenter();
-        newTokenRecord.tokenName = `${tokenNames[randomTokenName]}-${tokenWon}`;
-        newTokenRecord.tokenRate = random;
-        newTokenRecord.dateWon = dateWon;
-        newTokenRecord.wonBy = decoded._id;
-        newTokenRecord.usdRate = usdValueOfToken;
-        
-        
-        await newTokenRecord.save();
+        if(dateIsToday){
+            const getUserTokenCount = await TokenCenter.find({ wonBy: decoded?._id });
+            if(getUserTokenCount.length < 5){
+                let newTokenRecord = new TokenCenter();
+                newTokenRecord.tokenName = `${tokenNames[randomTokenName]}-${tokenWon}`;
+                newTokenRecord.tokenRate = random;
+                newTokenRecord.dateWon = dateWon;
+                newTokenRecord.wonBy = decoded?._id;
+                newTokenRecord.usdRate = usdValueOfToken;
+            }else{
+                res.status(400).send(`you have reached todays's win limit, see you tomorrow!`);
+            }
+        }else{
+            res.status(400).send(`Cannot win in the past...`);
+        }
         
     }catch(err){
         res.status(400).send('Invalid authentication token.');

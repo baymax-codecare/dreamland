@@ -9,6 +9,7 @@ router.post('/', async(req, res) => {
     const { tokenWon, dateWon } = req.body;
     const authToken = req.header('x-auth-token');
     if (!authToken) return res.status(401).send('Access denied, you are not logged in...');
+    if(!tokenWon && dateWon) return res.status(400).send('No token won...');
     
     const tokenNames = ['Alpha', 'Beta', 'Delta'];
     let now = new Date();
@@ -49,8 +50,6 @@ router.post('/', async(req, res) => {
     }catch(err){
         res.status(400).send('Invalid authentication token.');
     }
-    
-    if(!tokenWon && dateWon) return res.status(400).send('No token won...');
     
 })
 

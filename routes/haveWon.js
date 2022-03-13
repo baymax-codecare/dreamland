@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const moment = require('moment');
 const {TokenCenter} = require('../models/tokenCenter');
 const express = require('express');
 const router = express.Router();
@@ -15,7 +16,7 @@ router.post('/', async(req, res) => {
     let day = now.getUTCDate();
     let year = now.getUTCFullYear();
 
-    const newDate = day + "/" + month + "/" + year;
+    const newDate = year + "-" + month + "-" + day;
     const dateIsToday = newDate == dateWon;
     
     const random = Math.floor(Math.random() * 1000);
@@ -28,12 +29,16 @@ router.post('/', async(req, res) => {
         if(dateIsToday){
             const getUserTokenCount = await TokenCenter.find({ wonBy: decoded?._id });
             if(getUserTokenCount.length < 5){
+                let formatDateWon = moment(dateWon);
                 let newTokenRecord = new TokenCenter();
                 newTokenRecord.tokenName = `${tokenNames[randomTokenName]}-${tokenWon}`;
                 newTokenRecord.tokenRate = random;
-                newTokenRecord.dateWon = dateWon;
+                newTokenRecord.dateWon = formatDateWon.format();
                 newTokenRecord.wonBy = decoded?._id;
                 newTokenRecord.usdRate = usdValueOfToken;
+                
+                await newTokenRecord.save();
+                res.status(200).send('record successfully saved...')
             }else{
                 res.status(400).send(`you have reached todays's win limit, see you tomorrow!`);
             }
